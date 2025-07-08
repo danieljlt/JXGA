@@ -117,8 +117,8 @@ void Synth::render(float** outputBuffers, int sampleCount)
     }
 
     // Optional: prevent NaNs/clipping
-    protectYourEars(outputBufferLeft, sampleCount);
-    protectYourEars(outputBufferRight, sampleCount);
+    //protectYourEars(outputBufferLeft, sampleCount);
+    //protectYourEars(outputBufferRight, sampleCount);
 }
 
 // Handle incoming note-on event

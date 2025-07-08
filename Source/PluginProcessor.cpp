@@ -142,7 +142,7 @@ void JX11AudioProcessor::changeProgramName (int, const juce::String&)
 // DSP preparation and reset
 
 void JX11AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
-{
+{    
     synth.allocateResources(sampleRate, samplesPerBlock);
     parametersChanged.store(true); // Mark for update on next block
     reset();
@@ -213,7 +213,15 @@ void JX11AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 // Recalculates internal synth parameters when a plugin parameter changes
 void JX11AudioProcessor::update()
 {
-    float sampleRate = float(getSampleRate());
+    float sampleRate;
+    if (isNonRealtime())
+    {
+        sampleRate = float(synth.getSampleRate());
+    }
+    else
+    {
+        sampleRate = float(getSampleRate());
+    }
     float inverseSampleRate = 1.0f / sampleRate;
 
     // Convert ADSR times using exponential scaling for natural-feeling envelopes
@@ -315,8 +323,7 @@ void JX11AudioProcessor::splitBufferByEvents(juce::AudioBuffer<float>& buffer, j
             bufferOffset += samplesThisSegment;
         }
 
-        // Ignore messages longer than 3 bytes (e.g. sysex)
-        if (metadata.numBytes <= 3)
+        if (metadata.numBytes <= 3) // Ignore messages longer than 3 bytes (e.g. sysex)
         {
             uint8_t data1 = (metadata.numBytes >= 2) ? metadata.data[1] : 0;
             uint8_t data2 = (metadata.numBytes == 3) ? metadata.data[2] : 0;
@@ -386,9 +393,7 @@ bool JX11AudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* JX11AudioProcessor::createEditor()
 {
-    auto editor = new juce::GenericAudioProcessorEditor(*this);
-    editor->setSize(500, 700);
-    return editor;
+    return new JX11AudioProcessorEditor(*this);
 }
 
 //==============================================================================

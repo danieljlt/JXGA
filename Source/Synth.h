@@ -86,6 +86,12 @@ public:
 
     // Trigger a specific voice with a MIDI note and velocity
     void startVoice(int v, int note, int velocity);
+    
+    // === Getters for private variables ===
+    float getSampleRate()
+    {
+        return sampleRate;
+    }
 
 private:
     float sampleRate;
