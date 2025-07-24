@@ -108,6 +108,9 @@ public:
     void setCurrentProgram (int index) override;
     const juce::String getProgramName (int index) override;
     void changeProgramName (int index, const juce::String& newName) override;
+    
+    //Parameter setting for offline rendering
+    void setParamsOffline(const float paramValues[23]);
 
     //==============================================================================
     // State persistence (e.g., for saving in DAW sessions)

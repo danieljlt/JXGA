@@ -10,7 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "OfflineRenderer.h"
+#include "GeneticEngine.h"
 
 //==============================================================================
 /**
@@ -32,10 +32,13 @@ private:
     
     // Test to see how hard it is to start a headless synth instance and
     // render audio to a buffer
-    juce::TextButton renderButton { "Render & Play" };
+    juce::TextButton startGAButton { "Run GA" };
     
-    // An offline renderer object to use in the test
-    OfflineRenderer offline;
+    // Thread to start GA on
+    std::thread backgroundGAThread;
+    
+    // Engine that starts the genetic algorithm
+    GeneticEngine geneticEngine;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JX11AudioProcessorEditor)
 };

@@ -13,8 +13,24 @@
 JX11AudioProcessorEditor::JX11AudioProcessorEditor (JX11AudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    addAndMakeVisible(renderButton);
-    renderButton.onClick = [this]() { offline.renderCallAsync(); };
+    addAndMakeVisible(startGAButton);
+    startGAButton.onClick = [this]()
+    {
+        startGAButton.setEnabled(false);
+        startGAButton.setButtonText("Running");
+        
+        backgroundGAThread = std::thread([this]()
+        {
+            geneticEngine.start();
+        });
+        backgroundGAThread.detach();
+        
+        juce::MessageManager::callAsync([this]()
+        {
+            startGAButton.setEnabled(true);
+            startGAButton.setButtonText("Run GA");
+        });
+    };
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
@@ -35,5 +51,5 @@ void JX11AudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    renderButton.setBounds(10, 10, 120, 30);
+    startGAButton.setBounds(10, 10, 120, 30);
 }

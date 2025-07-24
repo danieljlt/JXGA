@@ -19,7 +19,7 @@
 const int NUM_PARAMS = 26;
 
 struct Preset {
-    // Constructor to initialize a preset with a name and 26 parameter values
+    // Constructor to initialize a preset with a name and 26 given parameter values
     Preset(const char* name,
            float p0, float p1, float p2, float p3,
            float p4, float p5, float p6, float p7,

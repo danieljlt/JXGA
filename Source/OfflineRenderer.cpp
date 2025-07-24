@@ -19,62 +19,17 @@ OfflineRenderer::OfflineRenderer()
 
 OfflineRenderer::~OfflineRenderer()
 {
-    if (backgroundRenderThread.joinable())
-    {
-        backgroundRenderThread.join();
-    }
-}
 
-
-// Gets called when "Render Test" button is pressed on the UI
-// Starts a background thread for the rendering to take place on
-void OfflineRenderer::renderCallAsync()
-{
-    // Check if already rendering
-    if (isRendering.load())
-    {
-        DBG("Rendering already in progress...");
-        return;
-    }
-    
-    // Join previous thread if it exists
-    if (backgroundRenderThread.joinable())
-    {
-        backgroundRenderThread.join();
-    }
-    
-    // Start new background thread
-    backgroundRenderThread = std::thread([this]() {
-        isRendering.store(true);
-        
-        try
-        {
-            coreRendering(); // Call the main render function
-            DBG("Background rendering completed successfully");
-        }
-        catch (const std::exception& e)
-        {
-            DBG("Error during background rendering: " + juce::String(e.what()));
-        }
-        catch (...)
-        {
-            DBG("Unknown error during background rendering");
-        }
-        
-        isRendering.store(false);
-    });
 }
 
 
 // Main logic that calls process block in a loop
-void OfflineRenderer::coreRendering()
+const float* OfflineRenderer::coreRendering(const float normalizedParams[23], const int& sampleRate, const int& totalSamples)
 {
     DBG("Starting offline render...");
-    
-    const int sampleRate = 44100;
-    const int lengthInSamples = 5 * sampleRate; // 5 seconds
-    
     const int blockSize = 4096;
+    
+    // Midi note values
     const int noteOnSample = 0;
     const int noteOffSample = 3 * sampleRate; // 3 seconds
     const int midiNote = 60; // Middle C
@@ -84,18 +39,18 @@ void OfflineRenderer::coreRendering()
     bool noteReleased = false;
     
     // Create output buffer
-    juce::AudioBuffer<float> outputBuffer(2, lengthInSamples);
+    juce::AudioBuffer<float> outputBuffer(2, totalSamples);
     outputBuffer.clear();
     
     // Allocate resources to audio processor
     processor.setNonRealtime(true);
     processor.prepareToPlay(sampleRate, blockSize);
-    processor.setCurrentProgram(1);
+    processor.setParamsOffline(normalizedParams);
     
     // Process audio in blocks
-    for (int currentSample = 0; currentSample < lengthInSamples; currentSample += blockSize)
+    for (int currentSample = 0; currentSample < totalSamples; currentSample += blockSize)
     {
-        int samplesThisBlock = std::min(blockSize, lengthInSamples - currentSample);
+        int samplesThisBlock = std::min(blockSize, totalSamples - currentSample);
         juce::AudioBuffer<float> audioBlock(2, samplesThisBlock);
         audioBlock.clear();
         juce::MidiBuffer midiBlock;
@@ -126,14 +81,23 @@ void OfflineRenderer::coreRendering()
         for (int ch = 0; ch < 2; ++ch)
             outputBuffer.copyFrom(ch, currentSample, audioBlock, ch, 0, samplesThisBlock);
     }
-    
     processor.releaseResources();
     
-    DBG("Rendering complete!");
+    // Convert stereo to mono by averaging both channels into the left channel
+    for (int i = 0; i < totalSamples; ++i)
+    {
+        float left = outputBuffer.getSample(0, i);
+        float right = outputBuffer.getSample(1, i);
+        float mono = 0.5f * (left + right);
+        outputBuffer.setSample(0, i, mono);
+    }
+
+    // Trim to one channel
+    outputBuffer.setSize(1, totalSamples, true, true, true);
+    
     printBufferStats(outputBuffer);
     
-    // Save to file
-    saveBufferToWav(outputBuffer, sampleRate, "rendered_test.wav");
+    return outputBuffer.getReadPointer(0);
 }
 
 // Helper function to save an audio buffer to a wav file on my desktop
