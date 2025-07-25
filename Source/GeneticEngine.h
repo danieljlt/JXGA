@@ -13,6 +13,7 @@
 #include "Individual.h"
 #include "GenomeProcessor.h"
 #include "PerceptualFeatures.h"
+#include "Population.h"
 
 class GeneticEngine
 {
@@ -22,5 +23,6 @@ class GeneticEngine
     void start();
     
     private:
+    void basicEvolutionaryLoop();
     
 };

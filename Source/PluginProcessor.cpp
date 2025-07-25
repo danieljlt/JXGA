@@ -138,7 +138,7 @@ void JX11AudioProcessor::changeProgramName (int, const juce::String&)
     // Program renaming not implemented
 }
 
-void JX11AudioProcessor::setParamsOffline(const float paramValues[23])
+void JX11AudioProcessor::setParamsOffline(const std::array<float, 23> paramValues)
 {
     // Array of all parameter pointers (to apply preset values)
     juce::RangedAudioParameter* params[23] =
@@ -154,7 +154,7 @@ void JX11AudioProcessor::setParamsOffline(const float paramValues[23])
     // Set parameters to given values (already normalized)
     for (int i = 0; i < 23; ++i)
     {
-        params[i]->setValueNotifyingHost(paramValues[i]);
+        params[i]->setValueNotifyingHost(paramValues.at(i));
     }
 }
 

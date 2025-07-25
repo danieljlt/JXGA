@@ -11,17 +11,17 @@
 #pragma once
 #include "thread"
 
+
 class Individual
 {
     public:
     Individual();
-    Individual(float paramValues[23]);
+    Individual(std::array<float, 23> paramValues);
     
-    void setAllParameters(float paramsValues[23]);
-    
-    float normalizedParams[23];
+    const std::array<float, 23> getParams() const { return normalizedParams; };
     
     float fitness;
     
     private:
+    std::array<float, 23> normalizedParams;
 };

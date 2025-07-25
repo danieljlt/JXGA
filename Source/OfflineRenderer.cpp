@@ -17,16 +17,9 @@ OfflineRenderer::OfflineRenderer()
 }
 
 
-OfflineRenderer::~OfflineRenderer()
-{
-
-}
-
-
 // Main logic that calls process block in a loop
-const float* OfflineRenderer::coreRendering(const float normalizedParams[23], const int& sampleRate, const int& totalSamples)
+const float* OfflineRenderer::coreRendering(const std::array<float, 23> normalizedParams, const int& sampleRate, const int& totalSamples)
 {
-    DBG("Starting offline render...");
     const int blockSize = 4096;
     
     // Midi note values
@@ -62,7 +55,6 @@ const float* OfflineRenderer::coreRendering(const float normalizedParams[23], co
             // Send MIDI Note On
             midiBlock.addEvent(juce::MidiMessage::noteOn(1, midiNote, (juce::uint8)velocity), 0);
             noteTriggered = true;
-            DBG("Note ON triggered at sample: " + juce::String(currentSample));
         }
         
         // Trigger note off at 3 seconds
@@ -71,7 +63,6 @@ const float* OfflineRenderer::coreRendering(const float normalizedParams[23], co
             // Send MIDI Note Off
             midiBlock.addEvent(juce::MidiMessage::noteOff(1, midiNote), noteOffSample - currentSample);
             noteReleased = true;
-            DBG("Note OFF triggered at sample: " + juce::String(currentSample));
         }
         
         // Render this block
@@ -95,7 +86,7 @@ const float* OfflineRenderer::coreRendering(const float normalizedParams[23], co
     // Trim to one channel
     outputBuffer.setSize(1, totalSamples, true, true, true);
     
-    printBufferStats(outputBuffer);
+    //printBufferStats(outputBuffer);
     
     return outputBuffer.getReadPointer(0);
 }

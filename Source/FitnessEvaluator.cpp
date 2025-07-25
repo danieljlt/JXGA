@@ -18,7 +18,9 @@ float FitnessEvaluator::evaluateFitness(const PerceptualFeatures& candidateFeatu
     
     totalSimilarity += mfccSimilarity(candidateFeatures.mfccFrames, targetFeatures.mfccFrames);
             
-    return totalSimilarity / numOfObjectives;  // Average similarity across all frames
+    totalSimilarity /= numOfObjectives;  // Average similarity across all frames
+    
+    return (totalSimilarity + 1.0f) / 2.0f; // return normalized similarity
 }
 
 // Calculates the similarity between two mfcc vectors

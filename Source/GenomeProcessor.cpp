@@ -11,7 +11,7 @@
 #include "GenomeProcessor.h"
 
 // Return fitness of given set of parameteres compared to target features
-float GenomeProcessor::returnFitnessFromGenome(const float normalizedParams[23], const PerceptualFeatures targetFeatures)
+float GenomeProcessor::returnFitnessFromGenome(const std::array<float, 23> normalizedParams, const PerceptualFeatures targetFeatures)
 {
     PerceptualFeatures candidateFeatures;
     FitnessEvaluator fitnessEvaluator;
@@ -24,7 +24,7 @@ float GenomeProcessor::returnFitnessFromGenome(const float normalizedParams[23],
 }
 
 // Return set of features given a set of parameters
-PerceptualFeatures GenomeProcessor::returnFeaturesFromGenome(const float normalizedParams[23])
+PerceptualFeatures GenomeProcessor::returnFeaturesFromGenome(const std::array<float, 23> normalizedParams)
 {
     int length = 5;
     int sampleRate = 44100;
