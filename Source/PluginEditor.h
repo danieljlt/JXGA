@@ -33,12 +33,6 @@ private:
     // Test to see how hard it is to start a headless synth instance and
     // render audio to a buffer
     juce::TextButton startGAButton { "Run GA" };
-    
-    // Thread to start GA on
-    std::thread backgroundGAThread;
-    
-    // Engine that starts the genetic algorithm
-    GeneticEngine geneticEngine;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JX11AudioProcessorEditor)
 };

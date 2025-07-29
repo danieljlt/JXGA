@@ -14,15 +14,17 @@
 #include "GenomeProcessor.h"
 #include "PerceptualFeatures.h"
 #include "Population.h"
+#include "ParameterFifo.h"
 
 class GeneticEngine
 {
     public:
     GeneticEngine();
+    explicit GeneticEngine(JX11AudioProcessor* mainProcessor);
     
-    void start();
+    void start(ParameterFifo& parameterFifo);
     
     private:
-    void basicEvolutionaryLoop();
-    
+    const Individual& basicEvolutionaryLoop();
+    JX11AudioProcessor* mainInstance;
 };

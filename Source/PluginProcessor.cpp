@@ -8,6 +8,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Utils.h"
+#include "GeneticEngine.h"
 
 //==============================================================================
 JX11AudioProcessor::JX11AudioProcessor()
@@ -54,6 +55,8 @@ JX11AudioProcessor::JX11AudioProcessor()
     setCurrentProgram(0);  // Load the default preset
 
     apvts.state.addListener(this); // Listen for parameter tree changes
+    
+    geneticEngine = std::make_unique<GeneticEngine>(this);
 }
 
 JX11AudioProcessor::~JX11AudioProcessor()
@@ -208,11 +211,61 @@ bool JX11AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) con
 #endif
 
 //==============================================================================
+// GA thread management
+
+void JX11AudioProcessor::startGa()
+{
+    if (gaRunning.load())
+        return; // Already running
+    
+    gaRunning.store(true);
+    
+    backgroundGAThread = std::thread([this]()
+    {
+        geneticEngine->start(parameterFifo);
+        gaRunning.store(false);
+        
+        // Notify completion on message thread
+        if (onGAComplete)
+        {
+            juce::MessageManager::callAsync([this]()
+            {
+                onGAComplete();
+            });
+        }
+    });
+    
+    backgroundGAThread.detach();
+}
+
+void JX11AudioProcessor::stopGa()
+{
+    gaRunning.store(false);
+}
+
+bool JX11AudioProcessor::isGaRunning()
+{
+    return gaRunning.load();
+}
+
+//==============================================================================
 // Main audio + MIDI processing
 
 void JX11AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
                                        juce::MidiBuffer& midiMessages)
 {
+    if (parameterFifo.pop(bestParams))
+    {
+        /*
+        juce::String paramString = "Best params: ";
+        for (float param : bestParams)
+        {
+            paramString += juce::String(param, 3) + ", ";
+        }
+        DBG(paramString);
+         */
+    }
+        
     juce::ScopedNoDenormals noDenormals;
 
     // Clear any output channels beyond the number of inputs

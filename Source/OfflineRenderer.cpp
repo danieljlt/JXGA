@@ -24,7 +24,7 @@ const float* OfflineRenderer::coreRendering(const std::array<float, 23> normaliz
     
     // Midi note values
     const int noteOnSample = 0;
-    const int noteOffSample = 3 * sampleRate; // 3 seconds
+    const int noteOffSample = totalSamples - sampleRate; // 1 second less than total length of clip to allow for release
     const int midiNote = 60; // Middle C
     const int velocity = 80;
     

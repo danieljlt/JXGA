@@ -19,7 +19,11 @@ void Population::randInit(size_t popSize)
     {
         std::array<float, 23> randParams;
         for (float& val: randParams)
+        {
             val = dist(gen);
+            //std::cout << val << std::endl;
+        }
+        //std::cout << std::endl;
         
         members.emplace_back(Individual(randParams));
     }

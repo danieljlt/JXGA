@@ -12,6 +12,9 @@
 #include <JuceHeader.h>
 #include "Synth.h"
 #include "Preset.h"
+#include "ParameterFifo.h"
+
+class GeneticEngine;  // forward declare
 
 // Namespace containing string identifiers for all plugin parameters,
 // each with a version number (used for state compatibility).
@@ -84,6 +87,12 @@ public:
     // Validates supported channel configurations (e.g., mono/stereo)
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
    #endif
+    
+    // GA thread management
+    void startGa();
+    void stopGa();
+    bool isGaRunning();
+    std::function<void()> onGAComplete;
 
     // Main processing function: handles MIDI + audio rendering
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
@@ -183,4 +192,11 @@ private:
     juce::AudioParameterFloat* tuningParam;
     juce::AudioParameterFloat* outputLevelParam;
     juce::AudioParameterChoice* polyModeParam;
+    
+    std::unique_ptr<GeneticEngine> geneticEngine;
+    std::thread backgroundGAThread;
+    std::atomic<bool> gaRunning{false};
+    
+    ParameterFifo parameterFifo{2}; // space to store = capacity - 1 for some reason that's why I use 2
+    std::array<float, 23> bestParams;
 };

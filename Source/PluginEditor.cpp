@@ -19,17 +19,13 @@ JX11AudioProcessorEditor::JX11AudioProcessorEditor (JX11AudioProcessor& p)
         startGAButton.setEnabled(false);
         startGAButton.setButtonText("Running");
         
-        backgroundGAThread = std::thread([this]()
-        {
-            geneticEngine.start();
-        });
-        backgroundGAThread.detach();
+        audioProcessor.startGa();
         
-        juce::MessageManager::callAsync([this]()
+        audioProcessor.onGAComplete = [this]()
         {
             startGAButton.setEnabled(true);
             startGAButton.setButtonText("Run GA");
-        });
+        };
     };
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
