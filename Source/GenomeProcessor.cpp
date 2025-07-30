@@ -40,3 +40,12 @@ PerceptualFeatures GenomeProcessor::returnFeaturesFromGenome(const std::array<fl
     return candidateFeatures;
 }
 
+// Render audio given set of features, save to wav file
+void GenomeProcessor::paramsToWav(const std::array<float, 23> normalizedParams, int length)
+{
+    int sampleRate = 44100;
+    int totalSamples = length * sampleRate;
+    OfflineRenderer offlineRenderer;
+    const float* audioOutput = offlineRenderer.coreRendering(normalizedParams, sampleRate, totalSamples, true);
+}
+

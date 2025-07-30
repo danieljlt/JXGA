@@ -19,7 +19,7 @@ class OfflineRenderer
     public:
     OfflineRenderer();
     
-    const float* coreRendering(const std::array<float, 23> normalisedParams, const int& sampleRate, const int& totalSamples);
+    const float* coreRendering(const std::array<float, 23> normalisedParams, const int& sampleRate, const int& totalSamples, bool saveFile = false);
     
     void saveBufferToWav(const juce::AudioBuffer<float>& buffer, int sampleRate, const juce::String& filename);
     

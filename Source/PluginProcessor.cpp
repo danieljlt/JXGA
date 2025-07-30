@@ -256,14 +256,7 @@ void JX11AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 {
     if (parameterFifo.pop(bestParams))
     {
-        /*
-        juce::String paramString = "Best params: ";
-        for (float param : bestParams)
-        {
-            paramString += juce::String(param, 3) + ", ";
-        }
-        DBG(paramString);
-         */
+        setParamsOffline(bestParams);
     }
         
     juce::ScopedNoDenormals noDenormals;
@@ -699,7 +692,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout JX11AudioProcessor::createPa
     layout.add(std::make_unique<juce::AudioParameterFloat>(
                                                            ParameterID::envDecay,
                                                            "Env Decay",
-                                                           juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f),
+                                                           juce::NormalisableRange<float>(15.0f, 100.0f, 1.0f),
                                                            50.0f,
                                                            juce::AudioParameterFloatAttributes().withLabel("%")));
     

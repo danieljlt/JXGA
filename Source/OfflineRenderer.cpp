@@ -18,7 +18,7 @@ OfflineRenderer::OfflineRenderer()
 
 
 // Main logic that calls process block in a loop
-const float* OfflineRenderer::coreRendering(const std::array<float, 23> normalizedParams, const int& sampleRate, const int& totalSamples)
+const float* OfflineRenderer::coreRendering(const std::array<float, 23> normalizedParams, const int& sampleRate, const int& totalSamples, bool saveFile)
 {
     const int blockSize = 4096;
     
@@ -82,11 +82,12 @@ const float* OfflineRenderer::coreRendering(const std::array<float, 23> normaliz
         float mono = 0.5f * (left + right);
         outputBuffer.setSample(0, i, mono);
     }
+    
+    if (saveFile)
+        saveBufferToWav(outputBuffer, sampleRate, "render_test.wav");
 
     // Trim to one channel
     outputBuffer.setSize(1, totalSamples, true, true, true);
-    
-    //printBufferStats(outputBuffer);
     
     return outputBuffer.getReadPointer(0);
 }

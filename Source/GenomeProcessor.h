@@ -25,5 +25,8 @@ class GenomeProcessor
     // Used for getting set of features for the target audio sample
     PerceptualFeatures returnFeaturesFromGenome(const std::array<float, 23> normalizedParams, int length);
     
+    // used for debugging
+    void paramsToWav(const std::array<float, 23> normalizedParams, int length);
+    
     private:
 };

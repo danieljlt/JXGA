@@ -25,6 +25,6 @@ class GeneticEngine
     void start(ParameterFifo& parameterFifo);
     
     private:
-    const Individual& basicEvolutionaryLoop();
+    void basicEvolutionaryLoop(ParameterFifo& parameterFifo);
     JX11AudioProcessor* mainInstance;
 };

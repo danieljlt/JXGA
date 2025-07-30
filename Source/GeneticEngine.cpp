@@ -26,14 +26,13 @@ void GeneticEngine::start(ParameterFifo& parameterFifo)
     // Here is where I would check the arguments I passed in from the UI
     // I would then be able to call the appropriate type of evolutionary algorithm.
     // Right now I just have a basic evolutionary algorithm so I can only choose that.
-    Individual fittest = basicEvolutionaryLoop();
-    //std::cout << fittest.getParams()[0] << std::endl;
-    bool push = parameterFifo.push(fittest.getParams());
+    
+    basicEvolutionaryLoop(parameterFifo);
 }
 
 
 // Basic Genetic Algorithm that returns fittest individual
-const Individual& GeneticEngine::basicEvolutionaryLoop()
+void GeneticEngine::basicEvolutionaryLoop(ParameterFifo& parameterFifo)
 {
     // Retreive features from target audio sample
     GenomeProcessor targetProcessor;
@@ -55,6 +54,6 @@ const Individual& GeneticEngine::basicEvolutionaryLoop()
         }
     }
     population.sortByFitness();
-    //population.printStatistics();
-    return population.getIndividual(0);
+    
+    parameterFifo.push(population.getIndividual(0).getParams());
 }
