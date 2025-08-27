@@ -10,11 +10,9 @@
 
 #include "Population.h"
 
-void Population::randInit(size_t popSize)
+void Population::randInit()
 {
-    members.clear();
-    members.reserve(popSize);
-    
+    size_t popSize = members.capacity();
     for (size_t i = 0; i < popSize; i++)
     {
         std::array<float, 23> randParams;

@@ -15,6 +15,7 @@
 #include "PerceptualFeatures.h"
 #include "Population.h"
 #include "ParameterFifo.h"
+#include "ParentSelector.h"
 
 class GeneticEngine
 {
@@ -27,4 +28,5 @@ class GeneticEngine
     private:
     void basicEvolutionaryLoop(ParameterFifo& parameterFifo);
     JX11AudioProcessor* mainInstance;
+    ParentSelector parentSelector;
 };
