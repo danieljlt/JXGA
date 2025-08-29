@@ -19,7 +19,12 @@
 class Population
 {
     public:
-    Population(size_t popSize) : gen(std::random_device{}()), dist(0.0f, 1.0f) { members.clear(); members.reserve(popSize); };
+    Population(size_t populationSize) : gen(std::random_device{}()), dist(0.0f, 1.0f)
+    {
+        members.clear();
+        members.reserve(popSize);
+        this->popSize = populationSize;
+    };
     
     // Randomly initialize a population of individuals
     void randInit();
@@ -46,6 +51,7 @@ class Population
     
     private:
     std::vector<Individual> members;
+    size_t popSize;
     
     std::random_device rd;
     std::mt19937 gen;

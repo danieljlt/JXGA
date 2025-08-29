@@ -30,8 +30,6 @@ class ParentSelector
     
     size_t tournamentSize = 3;
         
-    // Random number generation
-    std::random_device rd;
     std::mt19937 gen;
     
     // Returns vector of indices representing mating pool

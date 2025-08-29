@@ -22,16 +22,39 @@ ParentSelector::ParentSelector(int tournamentSize)
 // Create mating pool and return pairs in one step
 std::vector<std::pair<size_t, size_t>> ParentSelector::createMatingPairs( const Population& population, size_t numPairs)
 {
+    const size_t popSize = population.size();
+    if (popSize < 2)
+        return {};
+    
     std::vector<size_t> matingPool = createMatingPool(population, numPairs * 2);
+    if (matingPool.size() < 2) return {};
 
     std::vector<std::pair<size_t, size_t>> pairs;
     pairs.reserve(numPairs);
     
     std::shuffle(matingPool.begin(), matingPool.end(), gen);
     
-    for (size_t i = 0; i < numPairs * 2; i += 2)
+    for (size_t i = 0; (i + 1) < matingPool.size(); i += 2)
     {
-        pairs.push_back({matingPool.at(i), matingPool.at(i+1)});
+        size_t a = matingPool[i];
+        size_t b = matingPool[i + 1];
+        
+        // Ensure self-mating is not allowed
+        if (a == b)
+        {
+            // Try to swap b with a later element != a
+            for (size_t k = i + 2; k < matingPool.size(); ++k)
+            {
+                if (matingPool[k] != a)
+                {
+                    std::swap(matingPool[i + 1], matingPool[k]);
+                    b = matingPool[i + 1];
+                    break;
+                }
+            }
+        }
+
+        pairs.emplace_back(a, b);
     }
 
     return pairs;
@@ -55,13 +78,16 @@ std::vector<size_t> ParentSelector::createMatingPool(const Population& populatio
 // Perform a single tournament selection
 size_t ParentSelector::tournamentSelect(const Population& population)
 {
-    std::uniform_int_distribution<size_t> dist(0, population.size() - 1);
+    const size_t popSize = population.size();
+    std::uniform_int_distribution<size_t> dist(0, popSize - 1);
+    
+    const size_t tSizeClamped = std::max<size_t>(1, std::min(tournamentSize, popSize));
     
     // Initialize with random candidate
     size_t bestIndex = dist(gen);
     float bestFitness = population.getIndividual(bestIndex).fitness;
 
-    for (size_t i = 1; i < tournamentSize; ++i)
+    for (size_t i = 1; i < tSizeClamped; ++i)
     {
         size_t candidateIndex = dist(gen);
         const Individual& candidate = population.getIndividual(candidateIndex);

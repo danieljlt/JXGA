@@ -12,18 +12,15 @@
 
 void Population::randInit()
 {
-    size_t popSize = members.capacity();
     for (size_t i = 0; i < popSize; i++)
     {
         std::array<float, 23> randParams;
         for (float& val: randParams)
         {
             val = dist(gen);
-            //std::cout << val << std::endl;
         }
-        //std::cout << std::endl;
         
-        members.emplace_back(Individual(randParams));
+        members.emplace_back(randParams);
     }
 }
 

@@ -47,7 +47,7 @@ void GeneticEngine::basicEvolutionaryLoop(ParameterFifo& parameterFifo)
     Population population(popSize);
     population.randInit();
     
-    int generations = 100;
+    int generations = 1;
     Individual bestIndividual;
     
     // EA loop runs until enough generations have passed
@@ -77,6 +77,8 @@ void GeneticEngine::basicEvolutionaryLoop(ParameterFifo& parameterFifo)
         // Loop through pairs to create offspring
         for (const auto& pair : matingPairs)
         {
+            DBG(juce::String::formatted("(%zu, %zu)", pair.first, pair.second));
+            
             // if crossover rate is sufficient apply crossover
             // else copy parent
             

@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include "thread"
+#include <thread>
 
 
 class Individual
@@ -18,7 +18,7 @@ class Individual
     Individual();
     Individual(std::array<float, 23> paramValues);
     
-    const std::array<float, 23> getParams() const { return normalizedParams; };
+    const std::array<float, 23>& getParams() const { return normalizedParams; };
     
     float fitness;
     
